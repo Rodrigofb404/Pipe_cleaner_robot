@@ -1,7 +1,7 @@
-module vga_sync  (clock25, reset, v_sync, h_sync, blank, pixel_x, pixel_y); // ClockOut RGB, R, G, B,
+module vga_sync  (clock25, reset, v_sync, h_sync, display_on, pixel_x, pixel_y); // ClockOut RGB, R, G, B,
 
 	input wire clock25, reset;
-	output wire v_sync, h_sync, blank;
+	output wire v_sync, h_sync, display_on;
 	output wire [9:0] pixel_x, pixel_y;
 	
 	// Sync buffers
@@ -52,7 +52,7 @@ module vga_sync  (clock25, reset, v_sync, h_sync, blank, pixel_x, pixel_y); // C
 	assign vs_next = ((pixel_y_count >= VS_STA) && (pixel_y_count < VS_END)) ? 1'b0:1'b1;
 
 	// outputs
-	assign blank = ((pixel_x_count < HA_END) && (pixel_y_count < VA_END)) ? 1'b1:1'b0; 
+	assign display_on = ((pixel_x_count < HA_END) && (pixel_y_count < VA_END)) ? 1'b1:1'b0; 
 	assign h_sync = hs_count;
 	assign v_sync = vs_count;
 	assign pixel_x = pixel_x_count;
