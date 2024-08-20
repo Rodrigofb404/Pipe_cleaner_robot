@@ -8,7 +8,9 @@ module vga_graphs(display_on, pixel_x, pixel_y, R, G, B);
     parameter square_width = 200,
               screen_width = 640,
               screen_height = 480;
-
+	 
+	wire square;
+	 
     assign square = (pixel_x > (screen_width - square_width) / 2) && (pixel_x < (screen_width + square_width) / 2) 
                     && 
                     (pixel_y > (screen_height - square_width) / 2) && (pixel_y < (screen_height + square_width) / 2);
