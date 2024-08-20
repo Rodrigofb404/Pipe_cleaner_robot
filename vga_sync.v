@@ -1,6 +1,6 @@
-module vga_sync  (clock50, clock25, reset, v_sync, h_sync, blank, pixel_x, pixel_y); // ClockOut RGB, R, G, B,
+module vga_sync  (clock25, reset, v_sync, h_sync, blank, pixel_x, pixel_y); // ClockOut RGB, R, G, B,
 
-	input wire clock50, clock25, reset;
+	input wire clock25, reset;
 	output wire v_sync, h_sync, blank;
 	output wire [9:0] pixel_x, pixel_y;
 	
@@ -23,7 +23,7 @@ module vga_sync  (clock50, clock25, reset, v_sync, h_sync, blank, pixel_x, pixel
 			  VS_END = VS_STA + 10'd2, // Sync
 			  SCREEN = 10'd524; // ... + Back-porch
 
-	always @(posedge clock50 or negedge reset) begin
+	always @(posedge clock25 or negedge reset) begin
 		if (!reset) begin
 			hs_count <= 1'b0;
 			vs_count <= 1'b0;
@@ -43,6 +43,7 @@ module vga_sync  (clock50, clock25, reset, v_sync, h_sync, blank, pixel_x, pixel
 				pixel_y_next <= (pixel_y_count == SCREEN) ? 10'd0:pixel_y_count + 10'd1;
 			end else begin
 				pixel_x_next <= pixel_x_count + 10'd1;
+				pixel_y_next <= pixel_y_count;
 			end
 		end
 
