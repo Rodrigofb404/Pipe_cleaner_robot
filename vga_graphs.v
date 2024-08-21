@@ -3,7 +3,7 @@ module vga_graphs(display_on, pixel_x, pixel_y, R, G, B);
 	// input wire clock_50;
     input wire display_on;
     input wire [9:0] pixel_x, pixel_y;
-    output reg [3:0] R, G, B;
+    output reg [7:0] R, G, B;
 
     parameter square_width = 200,
               screen_width = 640,
@@ -17,13 +17,13 @@ module vga_graphs(display_on, pixel_x, pixel_y, R, G, B);
 
     always @(*) begin
         if (display_on) begin
-            R <= square ? 4'hF : 4'h0;
-            G <= 4'hF;
-            B <= square ? 4'h0 : 4'hF;
+            R <= square ? 8'hFF : 8'h00;
+            G <= square ? 8'hFF : 8'h00;
+            B <= square ? 8'h00 : 8'hFF;
         end else begin
-            R <= 4'h0;
-            G <= 4'h0;
-            B <= 4'h0;
+            R <= 8'h00;
+            G <= 8'h00;
+            B <= 8'h00;
         end
     end
 	
