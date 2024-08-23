@@ -1,10 +1,10 @@
-module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
+module vga_graphs(clock_25, display_on, pixel_x, pixel_y, sprites, R, G, B);
 
-	input wire clock_25;
+	 input wire clock_25;
     input wire display_on;
     input wire [9:0] pixel_x, pixel_y;
     input wire [3:0] sprites; // Select what sprite show
-    output reg [7:0] R, G, B;
+    output wire  [7:0] R, G, B;
      
 
     reg robot_north, robot_east, robot_south, robot_west, wall_block, free_path, black_block, trash_1, trash_2, trash_3; // sprites
@@ -23,18 +23,15 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
     9 = trash_3
     */
 
-    /*  COLOR CODE:
-    0 = PRETO -----> R = 8'h21 | G = 8'h1F | B = 8'h1D
-    1 = BRANCO -----> R = 8'hFF | G = 8'hFF | B = 8'hFF
-    2 = CINZA CLARO -----> R = 8'hC0 | G = 8'hC0 | B = 8'hC0
-    3 = CINZA ESCURO -----> R = 8'h7F | G = 8'h7F | B = 8'h7F
-    4 = VERMELHO -----> R = 8'hFF | G = 8'h00 | B = 8'h00
-    5 = AZUL -----> R = 8'h00 | G = 8'h00 | B = 8'hCD
-    6 = 
-    */
+    parameter BLACK = 24'h000000,
+              WHITE = 24'hFFFFFF,
+              LIGHT_GREY = 24'hC0C0C0,
+              DARK_GREY = 24'h7F7F7F,
+              RED = 24'hFF0000,
+              BLUE = 24'h0000CD; 
 
     always @(*) begin
-        case (sprite):
+        case (sprites)
             4'd0: {wall_block, free_path, robot_north, robot_east, robot_south, robot_west, black_block, trash_1, trash_2, trash_3} = 10'b1000_0000_00;
             4'd1: {wall_block, free_path, robot_north, robot_east, robot_south, robot_west, black_block, trash_1, trash_2, trash_3} = 10'b0100_0000_00;
             4'd2: {wall_block, free_path, robot_north, robot_east, robot_south, robot_west, black_block, trash_1, trash_2, trash_3} = 10'b0010_0000_00;
@@ -51,100 +48,100 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
 
     // wall_block________________________________________________________________________________________________________
     reg [0:31] wall_block_sprite; // R2D2
-    reg [4:0] wall_block_x
-    reg [4:0] wall_block_y
+    wire [4:0] wall_block_x;
+    wire [4:0] wall_block_y;
     always @(wall_block_y) begin
         case (wall_block_y)
             5'd0: wall_block_sprite =  32'b0000_0000_0000_0000_0000_0000_0000_0000;
-            5'd1: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd2: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd3: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd4: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd5: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd6: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd7: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd8: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd9: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd10: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd11: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd12: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd13: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd14: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd15: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd16: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd17: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd18: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd19: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd20: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd21: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd22: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd23: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd24: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd25: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd26: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd27: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd28: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd29: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd30: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
-            5'd31: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_3330;
+            5'd1: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd2: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd3: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd4: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd5: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd6: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd7: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd8: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd9: wall_block_sprite =  32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd10: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd11: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd12: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd13: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd14: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd15: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd16: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd17: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd18: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd19: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd20: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd21: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd22: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd23: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd24: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd25: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd26: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd27: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd28: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd29: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd30: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
+            5'd31: wall_block_sprite = 32'b0111_1111_1111_1111_1111_1111_1111_1110;
             5'd32: wall_block_sprite = 32'b0000_0000_0000_0000_0000_0000_0000_0000;
             default: wall_block_sprite = 32'b0000_0000_0000_0000_0000_0000_0000_0000;    
         endcase
     end
 
-            assign wall_block_x = pixel_x % 32;
-            assign wall_block_y = pixel_y % 32;
+    assign wall_block_x = pixel_x % 32;
+    assign wall_block_y = pixel_y % 32;
 
     // free_path________________________________________________________________________________________________________
-    reg [0:31] free_path_sprite; // R2D2
-    reg [4:0] free_path_x
-    reg [4:0] free_path_y
+    reg [0:95] free_path_sprite; // R2D2
+    wire [4:0] free_path_x;
+    wire [4:0] free_path_y;
     always @(free_path_y) begin
         case (free_path_y)
-            5'd0: free_path_sprite =  32'b0000_0000_0000_0000_0000_0000_0000_0000;
-            5'd1: free_path_sprite =  32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd2: free_path_sprite =  32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd3: free_path_sprite =  32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd4: free_path_sprite =  32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd5: free_path_sprite =  32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd6: free_path_sprite =  32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd7: free_path_sprite =  32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd8: free_path_sprite =  32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd9: free_path_sprite =  32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd10: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd11: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330; 
-            5'd12: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd13: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd14: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd15: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd16: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd17: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd18: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd19: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd20: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd21: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd22: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd23: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd24: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd25: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd26: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd27: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd28: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd29: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd30: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd31: free_path_sprite = 32'b0333_3333_3333_3333_3333_3333_3333_3330;
-            5'd32: free_path_sprite = 32'b0000_0000_0000_0000_0000_0000_0000_0000;
-            default: free_path_sprite = 32'b0000_0000_0000_0000_0000_0000_0000_0000;    
+            5'd0: free_path_sprite =  96'o0000_0000_0000_0000_0000_0000_0000_0000;
+            5'd1: free_path_sprite =  96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd2: free_path_sprite =  96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd3: free_path_sprite =  96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd4: free_path_sprite =  96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd5: free_path_sprite =  96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd6: free_path_sprite =  96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd7: free_path_sprite =  96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd8: free_path_sprite =  96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd9: free_path_sprite =  96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd10: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd11: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330; 
+            5'd12: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd13: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd14: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd15: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd16: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd17: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd18: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd19: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd20: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd21: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd22: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd23: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd24: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd25: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd26: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd27: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd28: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd29: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd30: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd31: free_path_sprite = 96'o0333_3333_3333_3333_3333_3333_3333_3330;
+            5'd32: free_path_sprite = 96'o0000_0000_0000_0000_0000_0000_0000_0000;
+            default: free_path_sprite = 96'o0000_0000_0000_0000_0000_0000_0000_0000;    
         endcase
     end
 
-            assign free_path_x = pixel_x % 32; // Get what the Col print (by 1 cause we are working with binary)
-            assign free_path_y = pixel_y % 32; // Get what the Row print
+    assign free_path_x = (pixel_x % 32) * 3; // Get what the Col print (by 1 cause we are working with binary)
+    assign free_path_y = pixel_y % 32; // Get what the Row print
     // Robot_north________________________________________________________________________________________________________
 
-    reg [0:31] robot_north_sprite; // R2D2
-    reg [4:0] robot_north_x
-    reg [4:0] robot_north_y
+    reg [0:95] robot_north_sprite; // R2D2
+    wire [4:0] robot_north_x;
+    wire [4:0] robot_north_y;
     always @(robot_north_y) begin
         case (robot_north_y)
             5'd0: robot_north_sprite =  96'o000_000_000_000_000_000_000_000_000_000_00;
@@ -184,13 +181,13 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
         endcase
     end
 
-        assign robot_north_x = (pixel_x % 32) * 3; // Get what col print (by 3 cause we are using octal)
-        assign robot_north_y = pixel_y % 32; // Get what row print
+    assign robot_north_x = (pixel_x % 32) * 3; // Get what col print (by 3 cause we are using octal)
+    assign robot_north_y = pixel_y % 32; // Get what row print
     // Robot_east________________________________________________________________________________________________________
 
-    reg [0:31] robot_east_sprite; 
-    reg [4:0] robot_east_x
-    reg [4:0] robot_east_y
+    reg [0:95] robot_east_sprite; 
+    wire [4:0] robot_east_x;
+    wire [4:0] robot_east_y;
     always @(robot_east_y) begin
         case (robot_east_y)
             5'd0: robot_east_sprite =  96'o000_000_000_000_000_000_000_000_000_000_00;
@@ -229,14 +226,14 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
             default: robot_east_sprite = 96'o000_000_000_000_000_000_000_000_000_000_00;    
         endcase
     end
-        assign robot_east_x = (pixel_x % 32) * 3;
-        assign robot_east_y = pixel_y % 32;
+    assign robot_east_x = (pixel_x % 32) * 3;
+    assign robot_east_y = pixel_y % 32;
 
     // Robot_south________________________________________________________________________________________________________
 
-    reg [0:31] robot_south_sprite; 
-    reg [4:0] robot_south_x
-    reg [4:0] robot_south_y
+    reg [0:95] robot_south_sprite; 
+    wire [4:0] robot_south_x;
+    wire [4:0] robot_south_y;
     always @(robot_south_y) begin
         case (robot_south_y)
             5'd0: robot_south_sprite =  96'o000_000_000_000_000_000_000_000_000_000_00;
@@ -275,14 +272,14 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
             default: robot_south_sprite = 96'o000_000_000_000_000_000_000_000_000_000_00;    
         endcase
     end
-        assign robot_south_x = (pixel_x % 32) * 3;
-        assign robot_south_y = pixel_y % 32;
+    assign robot_south_x = (pixel_x % 32) * 3;
+    assign robot_south_y = pixel_y % 32;
 
     // Robot_west________________________________________________________________________________________________________
 
-    reg [0:31] robot_west_sprite; 
-    reg [4:0] robot_west_x
-    reg [4:0] robot_west_y
+    reg [0:95] robot_west_sprite; 
+    wire [4:0] robot_west_x;
+    wire [4:0] robot_west_y;
     always @(robot_west_y) begin
         case (robot_west_y)
             5'd0: robot_west_sprite =  96'o000_000_000_000_000_000_000_000_000_000_00;
@@ -321,14 +318,14 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
             default: robot_west_sprite = 96'o000_000_000_000_000_000_000_000_000_000_00;    
         endcase
     end
-        assign robot_west_x = (pixel_x % 32) * 3;
-        assign robot_west_y = pixel_y % 32;
+    assign robot_west_x = (pixel_x % 32) * 3;
+    assign robot_west_y = pixel_y % 32;
 
     // Black_block________________________________________________________________________________________________________
 
     reg [0:31] black_block_sprite; 
-    reg [4:0] black_block_x
-    reg [4:0] black_block_y
+    wire [4:0] black_block_x;
+    wire [4:0] black_block_y;
     always @(black_block_y) begin
         case (black_block_y)
             5'd0: black_block_sprite =  32'b000_000_000_000_000_000_000_000_000_000_00;
@@ -367,14 +364,14 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
             default: black_block_sprite = 32'b0000_0000_0000_0000_0000_0000_0000_0000;    
         endcase
     end
-        assign black_block_x = (pixel_x % 32);
-        assign black_block_y = pixel_y % 32;
+    assign black_block_x = (pixel_x % 32);
+    assign black_block_y = pixel_y % 32;
 
     // Trash_1________________________________________________________________________________________________________
 
-    reg [0:31] trash_1_sprite;
-    reg [4:0] trash_1_x
-    reg [4:0] trash_1_y
+    reg [0:95] trash_1_sprite;
+    wire [4:0] trash_1_x;
+    wire [4:0] trash_1_y;
     always @(trash_1_y) begin
         case (trash_1_y)
             5'd0: trash_1_sprite =  96'o000_000_000_000_000_000_000_000_000_000_00;
@@ -414,14 +411,14 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
         endcase
     end  
 
-        assign trash_1_x = (pixel_x % 32) * 3;
-        assign trash_1_y = pixel_y % 32;
+    assign trash_1_x = (pixel_x % 32) * 3;
+    assign trash_1_y = pixel_y % 32;
     
     // Trash_2________________________________________________________________________________________________________
 
-    reg [0:31] trash_2_sprite;
-    reg [4:0] trash_2_x
-    reg [4:0] trash_2_y
+    reg [0:95] trash_2_sprite;
+    wire [4:0] trash_2_x;
+    wire [4:0] trash_2_y;
     always @(trash_2_y) begin
         case (trash_2_y)
             5'd0: trash_2_sprite =  96'o000_000_000_000_000_000_000_000_000_000_00;
@@ -461,14 +458,14 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
         endcase
     end  
 
-        assign trash_2_x = (pixel_x % 32 * 3;
-        assign trash_2_y = pixel_y % 32;
+    assign trash_2_x = (pixel_x % 32) * 3;
+    assign trash_2_y = pixel_y % 32;
 
      // trash_3________________________________________________________________________________________________________
 
-    reg [0:31] trash_3_sprite;
-    reg [4:0] trash_3_x
-    reg [4:0] trash_3_y
+    reg [0:95] trash_3_sprite;
+    wire [4:0] trash_3_x;
+    wire [4:0] trash_3_y;
     always @(trash_3_y) begin
         case (trash_3_y)
             5'd0: trash_3_sprite =  96'o000_000_000_000_000_000_000_000_000_000_00;
@@ -508,39 +505,150 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
         endcase
     end  
 
-        assign trash_3_x = (pixel_x % 32) * 3;
-        assign trash_3_y = pixel_y % 32;
-
-
-
-
-
-
-
-
-
-
-
-
+    assign trash_3_x = (pixel_x % 32) * 3;
+    assign trash_3_y = pixel_y % 32;
 
     // Color buffers;
     reg [7:0] R_reg, G_reg, B_reg; 
-    wire [7:0 ]R_next, G_next, B_next; 
+    reg [7:0]R_next, G_next, B_next; 
 
     always @(*) begin
-        
+        if (!display_on) begin
+            {R_next, G_next, B_next} = 24'hFFFFFF;
+        end else begin
+            case ({wall_block, free_path, robot_north, robot_east, robot_south, robot_west, black_block, trash_1, trash_2, trash_3})
+                10'b1000_0000_00: begin
+                    case (wall_block_sprite[wall_block_x])
+                        3'd0: {R_next, G_next, B_next} = BLACK;
+                        3'd1: {R_next, G_next, B_next} = WHITE;
+                        3'd2: {R_next, G_next, B_next} = LIGHT_GREY;
+                        3'd3: {R_next, G_next, B_next} = DARK_GREY;
+                        3'd4: {R_next, G_next, B_next} = RED;
+                        3'd5: {R_next, G_next, B_next} = BLUE;
+                        default: {R_next, G_next, B_next} = WHITE;   
+                            
+                    endcase
+                end
+                10'b0100_0000_00: begin
+                    case (free_path_sprite[free_path_x +: 3])
+                        3'd0: {R_next, G_next, B_next} = BLACK;
+                        3'd1: {R_next, G_next, B_next} = WHITE;
+                        3'd2: {R_next, G_next, B_next} = LIGHT_GREY;
+                        3'd3: {R_next, G_next, B_next} = DARK_GREY;
+                        3'd4: {R_next, G_next, B_next} = RED;
+                        3'd5: {R_next, G_next, B_next} = BLUE;
+                        default: {R_next, G_next, B_next} = WHITE;
+                    endcase
+                end
+                10'b0010_0000_00: begin
+                    case (robot_north_sprite[robot_north_x +: 3])
+                        3'd0: {R_next, G_next, B_next} = BLACK;
+                        3'd1: {R_next, G_next, B_next} = WHITE;
+                        3'd2: {R_next, G_next, B_next} = LIGHT_GREY;
+                        3'd3: {R_next, G_next, B_next} = DARK_GREY;
+                        3'd4: {R_next, G_next, B_next} = RED;
+                        3'd5: {R_next, G_next, B_next} = BLUE;
+                        default: {R_next, G_next, B_next} = WHITE;
+                    endcase
+                end
+                10'b0001_0000_00: begin
+                    case (robot_east_sprite[robot_east_x +: 3])
+                        3'd0: {R_next, G_next, B_next} = BLACK;
+                        3'd1: {R_next, G_next, B_next} = WHITE;
+                        3'd2: {R_next, G_next, B_next} = LIGHT_GREY;
+                        3'd3: {R_next, G_next, B_next} = DARK_GREY;
+                        3'd4: {R_next, G_next, B_next} = RED;
+                        3'd5: {R_next, G_next, B_next} = BLUE;
+                        default: {R_next, G_next, B_next} = WHITE;
+                    endcase
+                end
+                10'b0000_1000_00: begin
+                    case (robot_south_sprite[robot_south_x +: 3])
+                        3'd0: {R_next, G_next, B_next} = BLACK;
+                        3'd1: {R_next, G_next, B_next} = WHITE;
+                        3'd2: {R_next, G_next, B_next} = LIGHT_GREY;
+                        3'd3: {R_next, G_next, B_next} = DARK_GREY;
+                        3'd4: {R_next, G_next, B_next} = RED;
+                        3'd5: {R_next, G_next, B_next} = BLUE;
+                        default: {R_next, G_next, B_next} = WHITE;
+                    endcase
+                end
+                10'b0000_0100_00: begin
+                    case (robot_west_sprite[robot_west_x +: 3])
+                        3'd0: {R_next, G_next, B_next} = BLACK;
+                        3'd1: {R_next, G_next, B_next} = WHITE;
+                        3'd2: {R_next, G_next, B_next} = LIGHT_GREY;
+                        3'd3: {R_next, G_next, B_next} = DARK_GREY;
+                        3'd4: {R_next, G_next, B_next} = RED;
+                        3'd5: {R_next, G_next, B_next} = BLUE;
+                        default: {R_next, G_next, B_next} = WHITE;
+                    endcase
+                end
+                10'b0000_0010_00: begin
+                    case (black_block_sprite[black_block_x])
+                        3'd0: {R_next, G_next, B_next} = BLACK;
+                        3'd1: {R_next, G_next, B_next} = WHITE;
+                        3'd2: {R_next, G_next, B_next} = LIGHT_GREY;
+                        3'd3: {R_next, G_next, B_next} = DARK_GREY;
+                        3'd4: {R_next, G_next, B_next} = RED;
+                        3'd5: {R_next, G_next, B_next} = BLUE;
+                        default: {R_next, G_next, B_next} = WHITE;
+                    endcase
+                end
+                10'b0000_0001_00: begin
+                    case (trash_1_sprite[trash_1_x +: 3])
+                        3'd0: {R_next, G_next, B_next} = BLACK;
+                        3'd1: {R_next, G_next, B_next} = WHITE;
+                        3'd2: {R_next, G_next, B_next} = LIGHT_GREY;
+                        3'd3: {R_next, G_next, B_next} = DARK_GREY;
+                        3'd4: {R_next, G_next, B_next} = RED;
+                        3'd5: {R_next, G_next, B_next} = BLUE;
+                        default: {R_next, G_next, B_next} = WHITE;
+                    endcase
+                end
+                10'b0000_0000_10: begin
+                    case (trash_2_sprite[trash_2_x +: 3])
+                        3'd0: {R_next, G_next, B_next} = BLACK;
+                        3'd1: {R_next, G_next, B_next} = WHITE;
+                        3'd2: {R_next, G_next, B_next} = LIGHT_GREY;
+                        3'd3: {R_next, G_next, B_next} = DARK_GREY;
+                        3'd4: {R_next, G_next, B_next} = RED;
+                        3'd5: {R_next, G_next, B_next} = BLUE;
+                        default: {R_next, G_next, B_next} = WHITE;
+                    endcase
+                end
+                10'b0000_0000_01: begin
+                    case (trash_2_sprite[trash_2_x +: 3])
+                        3'd0: {R_next, G_next, B_next} = BLACK;
+                        3'd1: {R_next, G_next, B_next} = WHITE;
+                        3'd2: {R_next, G_next, B_next} = LIGHT_GREY;
+                        3'd3: {R_next, G_next, B_next} = DARK_GREY;
+                        3'd4: {R_next, G_next, B_next} = RED;
+                        3'd5: {R_next, G_next, B_next} = BLUE;
+                        default: {R_next, G_next, B_next} = WHITE;
+                    endcase
+                end
+                default : {R_next, G_next, B_next} = WHITE;
+                    
+            endcase
+        end
+
     end
     
-    always @(*) begin
-        if (display_on) begin
-            R <= square ? 8'hFF : 8'h00;
-            G <= square ? 8'hFF : 8'h00;
-            B <= square ? 8'h00 : 8'hFF;
+    always @(clock_25 or display_on) begin
+        if (!display_on) begin
+            R_reg <= 8'hff;
+            G_reg <= 8'hff;
+            B_reg <= 8'hff;
         end else begin
-            R <= 8'h00;
-            G <= 8'h00;
-            B <= 8'h00;
+            R_reg <= R_next;
+            G_reg <= G_next;
+            B_reg <= B_next;
         end
     end
+
+    assign R = R_reg;
+    assign G = G_reg;
+    assign B = B_reg;
 	
 endmodule
