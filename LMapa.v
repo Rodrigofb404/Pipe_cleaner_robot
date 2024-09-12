@@ -3,15 +3,17 @@ module LMapa (
    input [0:2] acao,
    input [0:2] orientacao,
    input reset,
-	
-   output reg head,
-   output reg left
+   output reg barreira,
+   output reg [0:3] head,
+   output reg [0:3] left
 );
 
-  reg [0:79] Mapa [0:9]; // 20 colunas e 10 linhas
+  reg [0:79] Mapa [0:9]; // 80 colunas e 10 linhas
   reg [0:7] Linha_Robo;
   reg [0:7] Coluna_Robo;
-reg [0:3] Posatt;
+  reg [0:3] head_aux;
+  reg [0:3] left_aux;
+ reg [0:3] valor ;
 
   initial begin
     Linha_Robo = 8'd9;
@@ -32,81 +34,136 @@ reg [0:3] Posatt;
   endtask
 
   always @(posedge clockc1 or posedge reset) begin
-	Posatt = Mapa[Linha_Robo][Coluna_Robo +: 4];
- //   $display("teste Linha_Robo: %d, Coluna_Robo: %d possatt:%h", Linha_Robo, Coluna_Robo, Posatt);
     if (reset) begin
-        head <= 4'b0000;
-        left <= 4'b0000;
-
-        // Reinicia a posição do robô
+      head <= 0;
+      left <= 0;
+      barreira <= 0;
+    end else if (acao == 3'b101) begin
+      case (orientacao)
+        3'b001 : begin
+          if (Mapa[Linha_Robo-1][Coluna_Robo +: 4] > 2) begin
+            Mapa[Linha_Robo-1][Coluna_Robo +: 4] = Mapa[Linha_Robo-1][Coluna_Robo +: 4] - 1;
+	  end else 
+            Mapa[Linha_Robo-1][Coluna_Robo +: 4] = 0;
+        end
+        3'b010 : begin
+          if (Mapa[Linha_Robo][Coluna_Robo-4 +: 4] > 2)
+            Mapa[Linha_Robo][Coluna_Robo-4 +: 4] = Mapa[Linha_Robo][Coluna_Robo-4 +: 4] - 1;
+          else 
+            Mapa[Linha_Robo][Coluna_Robo-4 +: 4] = 0;
+        end 
+        3'b011 : begin
+          if (Mapa[Linha_Robo][Coluna_Robo+4 +: 4] > 2)
+            Mapa[Linha_Robo][Coluna_Robo+4 +: 4] = Mapa[Linha_Robo][Coluna_Robo+4 +: 4] - 1;
+          else 
+            Mapa[Linha_Robo][Coluna_Robo+4 +: 4] = 0;
+        end
+        3'b100 : begin
+          if (Mapa[Linha_Robo+1][Coluna_Robo +: 4] > 2)
+            Mapa[Linha_Robo+1][Coluna_Robo +: 4] = Mapa[Linha_Robo+1][Coluna_Robo +: 4] - 1;
+          else 
+            Mapa[Linha_Robo+1][Coluna_Robo +: 4] = 0;
+        end
+      endcase
     end else if (acao != 3'b000) begin
-        // Zera a posição atual do robô no mapa
-
-	//print_mapa();
-        case (acao)
-            3'b001 : Linha_Robo = Linha_Robo - 1; // Norte
-            3'b010 : Coluna_Robo = Coluna_Robo - 4; // Oeste
-            3'b011 : Coluna_Robo = Coluna_Robo + 4; // Sul
-            3'b100 : Linha_Robo = Linha_Robo + 1; // Leste
-            default: ; // Sem ação
-        endcase
+      case (acao)
+        3'b001 : Linha_Robo = Linha_Robo - 1; // Norte
+        3'b010 : Coluna_Robo = Coluna_Robo - 4; // Oeste
+        3'b011 : Coluna_Robo = Coluna_Robo + 4; // Leste
+        3'b100 : Linha_Robo = Linha_Robo + 1; // Sul
+        default: ; // Sem ação
+      endcase
     end
 
     case (orientacao)
-        3'b001: begin // Norte
-            if (Linha_Robo > 0 && Coluna_Robo < 80)
-                head <= Mapa[Linha_Robo-1][Coluna_Robo +: 4];
-            else
-                head <= 1;
 
-            if (Linha_Robo < 10 && Coluna_Robo >= 3)
-                left <= Mapa[Linha_Robo][Coluna_Robo-4 +: 4];
-            else
-                left <= 1;
-        end
-        3'b010: begin 
-            if (Linha_Robo < 10 && Coluna_Robo >= 3)
-                head <= Mapa[Linha_Robo][Coluna_Robo-4 +: 4];
-            else
-                head <= 1;
-
-            if (Linha_Robo < 9)
-                left <= Mapa[Linha_Robo+1][Coluna_Robo +: 4];
-            else
-                left <= 1;
-        end
-        3'b011: begin 
-            if (Linha_Robo < 10 && Coluna_Robo < 77)
-                head <= Mapa[Linha_Robo][Coluna_Robo+4 +: 4];
-            else
-                head <= 1;
-
-            if (Linha_Robo > 0)
-                left <= Mapa[Linha_Robo-1][Coluna_Robo +: 4];
-            else
-                left <= 1;
-        end
-        3'b100: begin
-            if (Linha_Robo < 9)
-                head <= Mapa[Linha_Robo+1][Coluna_Robo +: 4];
-            else
-                head <= 1;
-
-            if (Coluna_Robo < 77)
-                left <= Mapa[Linha_Robo][Coluna_Robo +: 4];
-            else
-                left <= 1;
-        end
-        default: begin
-            head <= 0;
-            left <= 0;
-        end
+      3'b001: begin // Norte
+   if (Linha_Robo > 0 && Coluna_Robo > 3) begin
+	  head_aux = Mapa[Linha_Robo-1][Coluna_Robo +: 4];
+	  left_aux = Mapa[Linha_Robo][Coluna_Robo-4 +: 4];
+	end else if (Linha_Robo == 0 && Coluna_Robo == 0)begin
+	  head_aux = 1;
+	  left_aux = 1;
+	end else if (Linha_Robo > 0)begin
+	  head_aux = Mapa[Linha_Robo-1][Coluna_Robo +: 4];
+	  left_aux = 1;
+	end else begin
+          head_aux = 1;
+	  left_aux = Mapa[Linha_Robo][Coluna_Robo-4 +: 4];
+	end
+      end
+      3'b010: begin
+   if (Linha_Robo < 9 && Coluna_Robo > 3) begin
+	  head_aux = Mapa[Linha_Robo][Coluna_Robo-4 +: 4];
+	  left_aux = Mapa[Linha_Robo+1][Coluna_Robo +: 4];
+	end else if (Linha_Robo == 9 && Coluna_Robo == 0)begin
+	  head_aux = 1;
+	  left_aux = 1;
+	end else if (Linha_Robo < 9 )begin
+	  head_aux = 1;
+	  left_aux = Mapa[Linha_Robo+1][Coluna_Robo +: 4];
+	end else begin
+          head_aux = Mapa[Linha_Robo][Coluna_Robo-4 +: 4];
+	  left_aux = 1;
+	end
+      end
+      3'b011: begin
+   if (Linha_Robo > 0 && Coluna_Robo < 77) begin
+     head_aux = Mapa[Linha_Robo][Coluna_Robo+4 +: 4];
+	  left_aux = Mapa[Linha_Robo-1][Coluna_Robo +: 4];
+	end else if (Linha_Robo == 0 && Coluna_Robo == 77)begin
+	  head_aux = 1;
+	  left_aux = 1;
+	end else if (Linha_Robo > 0 )begin
+	  head_aux = 1;
+	  left_aux = Mapa[Linha_Robo-1][Coluna_Robo +: 4];
+	end else begin
+          head_aux = Mapa[Linha_Robo][Coluna_Robo+4 +: 4];
+	  left_aux = 1;
+	end
+     end
+      3'b100: begin
+        if (Linha_Robo < 9 && Coluna_Robo < 77) begin
+          head_aux = Mapa[Linha_Robo+1][Coluna_Robo +: 4];
+	  left_aux = Mapa[Linha_Robo][Coluna_Robo+4 +: 4];
+	end else if (Linha_Robo == 9 && Coluna_Robo == 77)begin
+	  head_aux = 1;
+	  left_aux = 1;
+	end else if (Linha_Robo < 9)begin
+	  head_aux = Mapa[Linha_Robo+1][Coluna_Robo +: 4];
+	  left_aux = 1;
+	end else begin
+          head_aux = 1;
+	  left_aux = Mapa[Linha_Robo][Coluna_Robo+4 +: 4];
+	end
+      end
+      default: begin
+        head <= 0;
+        left <= 0;
+      end
     endcase
 
-	Mapa[Linha_Robo][Coluna_Robo +: 4] = 4'b1111;
-	print_mapa();
-        Mapa[Linha_Robo][Coluna_Robo +: 4] = 4'b0000;
+	if (head_aux > 1) begin
 
-$display("testes acao :%b Orientacao: %b Linha_Robo: %d, Coluna_Robo: %d ",acao,orientacao,Linha_Robo,Coluna_Robo);
-  end
+	head <= 0;
+	barreira <= 1;
+	$display("chegou aqui");
+	end else begin
+
+	head <= head_aux;
+	barreira <=0;
+
+	end
+
+	if( left_aux>1) begin
+	left<=0;
+	end else begin
+	left<=left_aux;
+	end
+
+		 Mapa[Linha_Robo][Coluna_Robo +: 4] = 4'b1111;
+		 print_mapa();
+		 Mapa[Linha_Robo][Coluna_Robo +: 4] = 4'b0000;
+		 $display("testes acao :%b Orientacao: %b Linha_Robo: %d, Coluna_Robo: %d ", acao, orientacao, Linha_Robo, Coluna_Robo);
+	  end
 endmodule

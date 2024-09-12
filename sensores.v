@@ -1,4 +1,4 @@
-module sensores (
+module Sensores (
     input head,
     input left,
     input clockc2,
@@ -15,24 +15,27 @@ module sensores (
     reg [2:0] state_reg;
 
 // Codificação dos estados
-parameter procurandoMuro = 3'b000,
-          Standby = 3'b111,
-          AcompanhandoMuro = 3'b010,
-          RemovendoEntulho = 3'b011,
-          Gira = 3'b100,
-          Gira2 = 3'b101,
-          Gira3 = 3'b001;
+	parameter procurandoMuro = 3'b000,
+				 Standby = 3'b111,
+				 AcompanhandoMuro = 3'b010,
+				 RemovendoEntulho = 3'b011,
+				 Gira = 3'b100,
+				 Gira2 = 3'b101,
+				 Gira3 = 3'b001;
 
-// Inicialização da máquina
-initial begin
-    state = Standby;
-    state_reg = Standby;
-    avancar = 1'b0;
-    girar = 1'b0;
-end
+	// Inicialização da máquina
+	initial begin
+		 state = Standby;
+		 state_reg = Standby;
+		 avancar = 1'b0;
+		 girar = 1'b0;
+	end
 
-// Estado próximo
-always @(posedge clockc2) begin
+	// Estado próximo
+	always @(posedge clockc2) begin
+	
+	$display("head:%b , left:%b , under:%b .barreira :%b state:%b ", head,left,under,barreira ,state); 
+
     if (reset) begin
         state <= Standby;
         state_reg <= Standby;
@@ -48,7 +51,9 @@ always @(posedge clockc2) begin
                     state <= AcompanhandoMuro;
                 end else if (under) begin
                     state <= Standby;
-                end
+                end else if (barreira) begin
+		    state<=RemovendoEntulho;
+		end
             end
             RemovendoEntulho: begin
                 if ({head, under, barreira} == 3'b001) begin
@@ -58,6 +63,7 @@ always @(posedge clockc2) begin
                 end else if (head || under) begin
                     state <= Standby;
                 end
+
             end
             AcompanhandoMuro: begin
                 if ({head, left, under, barreira} == 4'b0100) begin
@@ -72,19 +78,25 @@ always @(posedge clockc2) begin
                     state <= Standby;
                 end else if (under) begin
                     state <= Standby;
-                end
+                end else if (barreira) begin
+		    state<=RemovendoEntulho;
             end
+end
             Gira: begin
                 if ({head, left} == 2'b00) begin
                     state <= AcompanhandoMuro;
-                end else begin
+                end else if (barreira) begin
+		    state<=RemovendoEntulho;
+		end else begin
                     state <= Gira2;
-                end
+		end
             end
             Gira2: begin
                 if ({head, left} == 2'b00) begin
                     state <= Gira3;
-                end else begin
+                end else if (barreira) begin
+		    state<=RemovendoEntulho;
+		end else begin
                     state <= AcompanhandoMuro;
                 end
             end
@@ -100,30 +112,26 @@ always @(posedge clockc2) begin
 end
 
 // Valor da saída
-always @(head , left , state) begin
-    $display("Head:%b Left:%b Estado_anterior:%b Estado_atual:%b", head, left, state_reg, state);
-    case (state)
-        procurandoMuro: begin
-            if ({head, left} == 2'b00 || {head, left} == 2'b01) begin
-                avancar = 1'b1;
-                girar = 1'b0;
-            end else if ({head, left} == 2'b10 || {head, left} == 2'b11) begin
-                avancar = 1'b0;
-                girar = 1'b1;
-            end
-        end
-        RemovendoEntulho: begin
-            if ({head, left} == 2'b00 || {head, left} == 2'b10) begin
-                avancar = 1'b0;
-                girar = 1'b1;
-            end else if ({head, left} == 2'b01) begin
-                avancar = 1'b1;
-                girar = 1'b0;
-            end else if ({head, left} == 2'b11) begin
-                avancar = 1'b0;
-                girar = 1'b1;
-                $display("status ");
-            end
+		always @(head , left , state) begin
+		//$display("state 2:%b ",state); 
+			 case (state)
+				  procurandoMuro: begin
+						if ({head, left} == 2'b00 || {head, left} == 2'b01) begin
+							 avancar = 1'b1;
+							 girar = 1'b0;
+						end else if ({head, left} == 2'b10 || {head, left} == 2'b11) begin
+							 avancar = 1'b0;
+							 girar = 1'b1;
+						end
+				  end
+				  RemovendoEntulho: begin
+		if(barreira) begin
+		remover =1;
+		girar =0;
+		avancar=0;
+		end
+
+
         end
         AcompanhandoMuro: begin
             if ({head, left} == 2'b00 || {head, left} == 2'b01) begin
@@ -144,7 +152,6 @@ always @(head , left , state) begin
             end
         end
         Gira2: begin
-	$display("status Gira 2 ");
             if ({head, left} == 2'b00) begin
                 avancar = 1'b0;
                 girar = 1'b1;
@@ -157,7 +164,6 @@ always @(head , left , state) begin
 	
         end
         Gira3: begin
-	$display("status Gira 3 ");
             if ({head, left} == 2'b00) begin
                 avancar = 1'b0;
                 girar = 1'b1;
@@ -171,6 +177,7 @@ always @(head , left , state) begin
             girar = 1'b0;
         end
     endcase
+$display("state do sensor : %b",state);
 end
 
 endmodule

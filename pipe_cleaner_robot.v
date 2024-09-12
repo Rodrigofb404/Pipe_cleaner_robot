@@ -1,31 +1,18 @@
-// Fiz um testbench global falta só por  o que a gente quer testar com o tempo :
+module pipe_cleaner_robot(
+    input wire clock,
+    input wire reset,
+    input wire under
+);
 
-`timescale 1ns / 1ps
-
-module testbench;
-
-    reg clock;
-    wire c1;
-    wire c2;
-    wire c3;
-    wire c4;
-
-    reg reset;
-
-    wire head;
-    wire left;
-
-    reg under;
-    wire barreira;
-
-    wire avancar;
-    wire girar;
-    wire remover;
-
+    // Sinais internos
+    wire c1, c2, c3, c4;
+    wire head, left;
+    wire avancar, girar, remover;
+    wire barreira;  // Sinal barreira declarado como wire interno
     wire [2:0] orientacao;
     wire [2:0] acao;
 
-    // módulos
+    // Instanciação do módulo LMapa
     LMapa UUT_LMapa (
         .clockc1(c1),
         .acao(acao),
@@ -33,9 +20,10 @@ module testbench;
         .reset(reset),
         .head(head),
         .left(left),
-	.barreira(barreira)
+        .barreira(barreira)  // Conectando o sinal barreira
     );
 
+    // Instanciação do módulo divisorclock
     divisorclock UUT_divisorclock ( 
         .clock(clock),
         .c1(c1), 
@@ -44,6 +32,7 @@ module testbench;
         .c4(c4) 
     );
 
+    // Instanciação do módulo orientacao
     orientacao UUT_orientacao ( 
         .girar(girar), 
         .clockc3(c2), 
@@ -51,42 +40,27 @@ module testbench;
         .orientacao(orientacao)
     );
 
+    // Instanciação do módulo Sensores
     Sensores UUT_Sensores (
         .head(head),
         .left(left),
         .clockc2(c3),
         .reset(reset),
         .under(under),
-        .barreira(barreira),
+        .barreira(barreira),  // Conectando o sinal barreira corretamente
         .avancar(avancar),
         .girar(girar),
         .remover(remover)
     );
 
+    // Instanciação do módulo avanco
     avanco UUT_avanco (
         .avancar(avancar), 
         .clockc3(c2), 
         .reset(reset),
         .orientacao(orientacao),
-		  .remover(remover),
+        .remover(remover),
         .acao(acao)
     );
-
-    // clock
-    initial begin
-        clock = 0;
-        forever #5 clock = ~clock; 
-    end
-
-    // teste
-    initial begin
-        reset = 1;
-        under = 0;
-
-        #10;
-        reset = 0;
-        #200 $stop;
-
-    end
 
 endmodule

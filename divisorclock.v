@@ -1,4 +1,4 @@
-module divisorclock ( // precisa por reset no mapa??
+module divisorclock (
     input wire clock,
     output reg c1, c2, c3, c4 
 );

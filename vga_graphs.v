@@ -511,18 +511,6 @@ module vga_graphs(clock_25, display_on, pixel_x, pixel_y, R, G, B, sprites);
         assign trash_3_x = (pixel_x % 32) * 3;
         assign trash_3_y = pixel_y % 32;
 
-
-
-
-
-
-
-
-
-
-
-
-
     // Color buffers;
     reg [7:0] R_reg, G_reg, B_reg; 
     wire [7:0 ]R_next, G_next, B_next; 

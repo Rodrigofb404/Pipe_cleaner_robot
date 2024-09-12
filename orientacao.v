@@ -1,4 +1,4 @@
-module orientacao ( // precisa ir para o norte?? quando reseta??
+module orientacao ( 
     input girar, clockc3, reset,
     output reg [0:2] orientacao
 );
@@ -18,7 +18,6 @@ initial begin
 end
 
 always @(posedge clockc3 or posedge reset) begin
-$display("Girar = %b",girar);
     if (reset) begin
         state <= Norte;
         orientacao <= Norte;
